@@ -87,9 +87,10 @@ else
     echo "Open: https://github.com/settings/keys"
     read -r -p "Press Enter after you've added the key to GitHub..."
 
-    echo "🔍 Testing SSH access to GitHub... (Expected success message: Hi <username>! You've successfully authenticated, but GitHub does not provide shell access.)"
+    echo "🧪 Testing SSH access to GitHub..."
+    echo "🔍 Expected success message: Hi <username>! You've successfully authenticated, but GitHub does not provide shell access.)"
     # test access before continuing
-    SSH_TEST_OUTPUT="$(ssh -T -i "$SSH_KEY_PATH" -o IdentitiesOnly=yes git@github.com || true)"
+    SSH_TEST_OUTPUT="$(ssh -T -i "$SSH_KEY_PATH" -o IdentitiesOnly=yes git@github.com 2>&1 || true)"
     echo "$SSH_TEST_OUTPUT"
     if [[ "$SSH_TEST_OUTPUT" != *"successfully authenticated"* ]]; then
         echo "❌ SSH authentication failed. Make sure the public key was added to GitHub, then re-run this script."
