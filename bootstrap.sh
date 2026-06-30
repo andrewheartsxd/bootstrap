@@ -92,17 +92,22 @@ else
     # test access before continuing
     SSH_TEST_OUTPUT="$(ssh -T -i "$SSH_KEY_PATH" -o IdentitiesOnly=yes git@github.com 2>&1 || true)"
     echo "$SSH_TEST_OUTPUT"
-    printf 'DEBUG raw output: <%s>\n' "$SSH_TEST_OUTPUT"
-    if [[ "$SSH_TEST_OUTPUT" != *"successfully authenticated"* ]]; then
-        echo "❌ SSH authentication failed. Make sure the public key was added to GitHub, then re-run this script."
-        exit 1
-    fi
+
+    case "$SSH_TEST_OUTPUT" in
+        *"successfully authenticated"*)
+            echo "✅ SSH authentication succeeded."
+            ;;
+        *)
+            echo "❌ SSH authentication failed. Make sure the public key was added to GitHub, then re-run this script."
+            exit 1
+            ;;
+    esac
 
     echo "🆕 Initializing chezmoi from GitHub..."
     # Initialize chezmoi from GitHub using the previously generated SSH key
     GIT_SSH_COMMAND="ssh -i \"$SSH_KEY_PATH\" -o IdentitiesOnly=yes" \
         chezmoi init --apply \
-        --data "ssh_key_name=$SSH_KEY_NAME" \
+        --promptString "Enter a unique name for this machine's SSH key (e.g., work-mac, personal-pc)=$SSH_KEY_NAME" \
         "git@github.com:$GH_USER/dotfiles.git"
 fi
 
