@@ -92,7 +92,8 @@ else
     # test access before continuing
     SSH_TEST_OUTPUT="$(ssh -T -i "$SSH_KEY_PATH" -o IdentitiesOnly=yes git@github.com 2>&1 || true)"
     echo "$SSH_TEST_OUTPUT"
-    if echo "$SSH_TEST_OUTPUT" | grep -q "successfully authenticated"; then
+    printf 'DEBUG raw output: <%s>\n' "$SSH_TEST_OUTPUT"
+    if [[ "$SSH_TEST_OUTPUT" != *"successfully authenticated"* ]]; then
         echo "❌ SSH authentication failed. Make sure the public key was added to GitHub, then re-run this script."
         exit 1
     fi
