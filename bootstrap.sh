@@ -9,11 +9,16 @@ echo "🚀 Starting bootstrap for OS: $OS"
 # 1. Install Git based on OS
 if [ "$OS" = "Darwin" ]; then
     # macOS
-    if ! command -v git &> /dev/null; then
-        echo "📦 Git not found. Installing Xcode Command Line Tools..."
+    if ! xcode-select -p >/dev/null 2>&1; then
+        echo "📦 Xcode Command Line Tools not found. Installing..."
         # This triggers the macOS native git/developer tools installer
         xcode-select --install || true
         echo "🔔 Please complete the Xcode CLI installation pop-up, then re-run this script."
+        exit 1
+    fi
+
+    if ! command -v git &> /dev/null; then
+        echo "❌ Git should be provided by Xcode Command Line Tools, but it was not found."
         exit 1
     fi
 elif [ "$OS" = "Linux" ]; then
@@ -41,11 +46,13 @@ fi
 echo "✅ chezmoi is ready."
 
 # 3. Use chezmoi to apply dotfiles
-if [ -d "$HOME/.local/share/chezmoi" ]; then
+CHEZMOI_SOURCE="$HOME/.local/share/chezmoi"
+if [ -d "$CHEZMOI_SOURCE/.git" ]; then
     # chezmoi is already initialized, so just apply the dotfiles
     echo "🔄 Running chezmoi apply..."
     chezmoi apply
 else
+    echo "🆕 chezmoi source not initialized. Initializing from GitHub..."
     # Prompt the user for their GitHub username
     read -r -p "👤 Enter the GitHub username for your dotfiles repo: " GH_USER
     # Quick sanity check: If the user just hits enter, throw an error and exit
@@ -103,7 +110,7 @@ else
             ;;
     esac
 
-    echo "🆕 Initializing chezmoi from GitHub..."
+    echo "✨ Initializing chezmoi from GitHub..."
     # Initialize chezmoi from GitHub using the previously generated SSH key
     GIT_SSH_COMMAND="ssh -i \"$SSH_KEY_PATH\" -o IdentitiesOnly=yes" \
         chezmoi init --apply \
