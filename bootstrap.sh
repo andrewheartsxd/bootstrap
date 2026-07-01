@@ -114,7 +114,7 @@ else
     # Initialize chezmoi from GitHub using the previously generated SSH key
     GIT_SSH_COMMAND="ssh -i \"$SSH_KEY_PATH\" -o IdentitiesOnly=yes" \
         chezmoi init --apply \
-        --promptString "Enter a unique name for this machine's SSH key (e.g., work-mac, personal-pc)=$SSH_KEY_NAME" \
+        --promptString "personal_github_ssh_key_name=$SSH_KEY_NAME" \
         "git@github.com:$GH_USER/dotfiles.git"
 fi
 
