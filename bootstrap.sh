@@ -67,10 +67,10 @@ else
     fi
 
     # Create SSH key for private dotfiles repo and add it to GitHub
-    read -r -p "🔑 Enter SSH key name for this machine (e.g., work-mac): " SSH_KEY_LABEL
+    read -r -p "🔑 Enter SSH key label for this machine (e.g., work-mac): " SSH_KEY_LABEL
 
     if [ -z "$SSH_KEY_LABEL" ]; then
-        echo "❌ Error: SSH key name cannot be empty."
+        echo "❌ Error: SSH key label cannot be empty."
         exit 1
     fi
 
