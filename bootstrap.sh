@@ -69,7 +69,7 @@ else
         exit 1
     fi
 
-    SSH_KEY_NAME="${SSH_KEY_LABEL}_${GH_USER}"
+    SSH_KEY_NAME="${SSH_KEY_LABEL}_github_${GH_USER}"
     SSH_KEY_PATH="$HOME/.ssh/$SSH_KEY_NAME"
 
     mkdir -p "$HOME/.ssh"
@@ -84,7 +84,7 @@ else
         eval "$(ssh-agent -s)"
         ssh-add "$SSH_KEY_PATH"
     else
-        echo "⚠️ ssh-agent or ssh-add not found; skipping ssh-add."
+        echo "⚠️  ssh-agent or ssh-add not found; skipping ssh-add."
     fi
 
     echo "Add this SSH public key to GitHub:"
@@ -112,6 +112,7 @@ else
 
     echo "✨ Initializing chezmoi from GitHub..."
     export BOOTSTRAP_SSH_KEY_NAME="$SSH_KEY_NAME"
+    export BOOTSTRAP_SSH_KEY_LABEL="$SSH_KEY_LABEL"
     # Initialize chezmoi from GitHub using the previously generated SSH key
     GIT_SSH_COMMAND="ssh -i \"$SSH_KEY_PATH\" -o IdentitiesOnly=yes" \
         chezmoi init --apply \
