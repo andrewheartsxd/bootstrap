@@ -47,7 +47,12 @@ echo "✅ chezmoi is ready."
 
 # 3. Use chezmoi to apply dotfiles
 CHEZMOI_SOURCE="$HOME/.local/share/chezmoi"
+CHEZMOI_CONFIG="$HOME/.config/chezmoi/chezmoi.toml"
 if [ -d "$CHEZMOI_SOURCE/.git" ]; then
+    if [ ! -f "$CHEZMOI_CONFIG" ]; then
+        echo "⚠️  chezmoi config missing (likely from a previous failed init). Regenerating..."
+        chezmoi init
+    fi
     # chezmoi is already initialized, so just apply the dotfiles
     echo "🔄 Running chezmoi apply..."
     chezmoi apply
